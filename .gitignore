@@ -1,0 +1,6 @@
+.idea
+.env
+go.work
+go.work.sum
+*.test
+*.out
