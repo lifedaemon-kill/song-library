@@ -1,12 +1,14 @@
 package services
 
 import (
+	"encoding/json"
+	"io"
 	"net/http"
 	"song-library/models"
 )
 
 type ClientService interface {
-	GetDetailData(params models.InfoQueryParams) (models.Song, error)
+	GetDetailData(params models.InfoQueryParams) (models.SongDetail, error)
 }
 
 type clientService struct {
@@ -17,19 +19,22 @@ func NewClientService(host string) ClientService {
 	return &clientService{host}
 }
 
-func (c *clientService) GetDetailData(params models.InfoQueryParams) (models.Song, error) {
+func (c *clientService) GetDetailData(params models.InfoQueryParams) (models.SongDetail, error) {
 	response, err := http.Get(c.apiHost + "/info")
 	if err != nil {
-		return models.Song{}, err
+		return models.SongDetail{}, err
 	}
 	defer response.Body.Close()
-	var ResponseSongDetail models.SongDetail
 
-	song := models.Song{
-		Author:     params.Group,
-		Title:      params.Song,
-		SongDetail: ResponseSongDetail,
+	body, err := io.ReadAll(response.Body)
+	if err != nil {
+		return models.SongDetail{}, err
 	}
 
-	return song, nil
+	var details models.SongDetail
+	if err = json.Unmarshal(body, &details); err != nil {
+		return models.SongDetail{}, err
+	}
+
+	return details, nil
 }

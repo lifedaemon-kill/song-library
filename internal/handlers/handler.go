@@ -46,6 +46,7 @@ func (h *SongHandler) GetLyrics(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+
 	lyrics, err := h.songService.GetLyrics(id, offset)
 	if err != nil {
 		logger.Log.Error(err)
@@ -84,9 +85,32 @@ func (h *SongHandler) UpdateSong(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	h.songService.UpdateSong(id, song)
+	if id, err = h.songService.UpdateSong(id, song); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": id})
 }
 func (h *SongHandler) AddSong(c *gin.Context) {
-	//info := c.ShouldBindJSON(&models.InfoQueryParams{})
+	var info models.InfoQueryParams
+	if err := c.ShouldBindJSON(&info); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
 
+	details, err := h.clientService.GetDetailData(info)
+
+	song := models.Song{
+		Title:      info.Song,
+		Author:     info.Group,
+		SongDetail: details,
+	}
+
+	var id int
+	id, err = h.songService.AddSong(song)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": id})
 }

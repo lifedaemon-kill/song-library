@@ -10,6 +10,7 @@ type Service interface {
 	DeleteSong(id int) error
 	GetLyrics(songId, pageOffset int) (string, error)
 	UpdateSong(id int, song models.Song) (int, error)
+	AddSong(song models.Song) (int, error)
 }
 
 type SongService struct {
@@ -29,21 +30,29 @@ func (s *SongService) DeleteSong(id int) error {
 }
 
 func (s *SongService) GetLyrics(songId, pageOffset int) (string, error) {
-	const sizeVerse = 3 //Как много куплетов выводить
+	const verseCount = 3 //Сколько куплетов выводить
 	lyrics, err := s.repo.GetLyrics(songId)
 	if err != nil {
 		return "", err
 	}
 
 	verses := strings.Split(lyrics, "\n\n")
-	targetVerses := verses[pageOffset : pageOffset+sizeVerse]
+	targetVerses := verses[pageOffset : pageOffset+verseCount]
 
 	return strings.Join(targetVerses, "\n\n"), nil
 }
+
 func (s *SongService) UpdateSong(id int, song models.Song) (int, error) {
 	updatedId, err := s.repo.Update(id, song)
 	if err != nil {
 		return -1, err
 	}
 	return updatedId, nil
+}
+func (s *SongService) AddSong(song models.Song) (int, error) {
+	id, err := s.repo.Create(song)
+	if err != nil {
+		return 0, err
+	}
+	return id, nil
 }
