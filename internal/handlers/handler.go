@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"song-library/internal/services"
 	"song-library/logger"
+	"song-library/models"
 	"strconv"
 )
 
@@ -16,11 +17,12 @@ type Handler interface {
 	AddSong(c *gin.Context)
 }
 type SongHandler struct {
-	songService services.Service
+	songService   services.Service
+	clientService services.ClientService
 }
 
-func NewHandler(songService services.Service) *SongHandler {
-	return &SongHandler{songService}
+func NewHandler(songService services.Service, clientService services.ClientService) *SongHandler {
+	return &SongHandler{songService, clientService}
 }
 
 // GetLibrary Получение данных библиотеки с фильтрацией по всем полям и пагинацией
@@ -70,4 +72,23 @@ func (h *SongHandler) DeleteSong(c *gin.Context) {
 	}
 	logger.Log.Info("Song " + strconv.Itoa(id) + " deleted")
 	c.JSON(200, gin.H{"message": "ok"})
+}
+
+func (h *SongHandler) UpdateSong(c *gin.Context) {
+	id, err := strconv.Atoi(c.Query("id"))
+	if err != nil {
+		logger.Log.Error(err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	var song models.Song
+	if err = c.ShouldBindJSON(&song); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	h.songService.UpdateSong(id, song)
+}
+func (h *SongHandler) AddSong(c *gin.Context) {
+	//info := c.ShouldBindJSON(&models.InfoQueryParams{})
+
 }
