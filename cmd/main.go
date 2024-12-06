@@ -15,13 +15,14 @@ const migrationsPath = "migrations"
 
 func main() {
 	var err error
+	//Logger
 	logger.Log, err = logger.GetNewLogger()
-
 	if err != nil {
 		panic(err)
 	}
 	logger.Log.Info("Trying start server...")
 
+	//Database
 	database, err := db.NewDB(configs.GetConfig())
 	if err != nil {
 		logger.Log.Fatal("Init database was failed | ", err)
@@ -34,8 +35,9 @@ func main() {
 		logger.Log.Info("Init migrations was failed")
 		panic(err)
 	}
+	logger.Log.Info("Init migrations successful")
 
-	//Internal layer - внутренний слой
+	//Internal layer
 	repository := domains.NewSongRepository(database)
 	service := services.NewSongService(repository)
 	clientService := services.NewClientService("localhost:3000")
