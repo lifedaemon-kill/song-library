@@ -6,6 +6,8 @@ import (
 	"os"
 )
 
+var Log *logrus.Logger
+
 func GetNewLogger() (*logrus.Logger, error) {
 	logFilePath := "logger/api.log"
 
