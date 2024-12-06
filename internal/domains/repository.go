@@ -74,7 +74,7 @@ func (r *SongRepository) GetSliceSongs(offset, limit int) ([]models.Song, error)
 }
 
 func (r *SongRepository) GetLyrics(songId int) (string, error) {
-	query := fmt.Sprintf("SELECT text FROM %s WHERE id=$1", songTable)
+	query := fmt.Sprintf("SELECT lyrics FROM %s WHERE id=$1", songTable)
 	var lyrics string
 	if err := r.db.Get(&lyrics, query, songId); err != nil {
 		return "", err
