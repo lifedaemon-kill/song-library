@@ -2,40 +2,61 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/sirupsen/logrus"
 	"net/http"
 	"song-library/configs"
 	"song-library/db"
+	"song-library/internal/domains"
+	"song-library/internal/handlers"
+	"song-library/internal/services"
 	"song-library/logger"
 )
 
-var Log *logrus.Logger //
-
 func main() {
 	var err error
-	Log, err = logger.GetNewLogger()
+	logger.Log, err = logger.GetNewLogger()
 
 	if err != nil {
 		panic(err)
 	}
-	Log.Info("Init logger successful")
+	logger.Log.Info("Init logger successful")
 
-	db, err := db.NewDB(configs.GetConfig())
+	database, err := db.NewDB(configs.GetConfig())
 	if err != nil {
-		Log.Fatal("Init database was failed", err)
+		logger.Log.Fatal("Init database was failed", err)
 		panic(err)
 	}
-	err = db.Ping()
+	err = database.Ping()
 	if err != nil {
-		Log.Fatal("Init database was failed", err)
+		logger.Log.Fatal("Init database was failed", err)
 	}
-	Log.Info("Init database successful")
+	logger.Log.Info("Init database successful")
 
+	//Internal layer - внутренний слой
+	repository := domains.NewSongRepository(database)
+	service := services.NewSongService(repository)
+	handler := handlers.NewHandler(service)
+	logger.Log.Info("Init internal layer successful")
+
+	//Server
 	router := gin.Default()
-	Log.Info("Init server successful")
+	logger.Log.Info("Init server successful")
 
 	router.GET("/ping", func(c *gin.Context) {
 		c.JSON(http.StatusOK, "pong!")
 	})
 
+	//1 Получение данных библиотеки с фильтрацией по всем полям и пагинацией
+	router.GET("/songs", handler.GetLibrary)
+
+	//2 Получение текста песни с пагинацией по куплетам
+	router.GET("/songs/:id", handler.GetLyrics)
+
+	//3 Удаление песни
+	router.DELETE("songs/:id", handler.DeleteSong)
+
+	//4 Изменение данных песни
+	router.PUT("songs/:id", handler.UpdateSong)
+
+	//5 Добавление новой песни в формате JSON
+	router.POST("/songs", handler.AddSong)
 }
