@@ -1,6 +1,10 @@
 package configs
 
-import "os"
+import (
+	"github.com/joho/godotenv"
+	"os"
+	"song-library/logger"
+)
 
 type DBConfig struct {
 	Username string
@@ -11,6 +15,11 @@ type DBConfig struct {
 }
 
 func GetConfig() DBConfig {
+	err := godotenv.Load()
+	if err != nil {
+		logger.Log.Fatal("Error loading env file | ", err)
+	}
+
 	cfg := DBConfig{}
 
 	cfg.Username = os.Getenv("USER")
