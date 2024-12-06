@@ -23,8 +23,7 @@ func NewDB(cfg configs.DBConfig) (*sqlx.DB, error) {
 	if err != nil {
 		return nil, err
 	}
-	err = db.Ping()
-	if err != nil {
+	if err = db.Ping(); err != nil {
 		return nil, err
 	}
 	return db, nil

@@ -63,9 +63,7 @@ func (h *SongHandler) DeleteSong(c *gin.Context) {
 		return
 	}
 
-	err = h.songService.DeleteSong(id)
-
-	if err != nil {
+	if err = h.songService.DeleteSong(id); err != nil {
 		logger.Log.Error(err)
 		c.JSON(500, gin.H{"error": err})
 		return

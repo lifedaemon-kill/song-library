@@ -21,9 +21,7 @@ func NewSongService(repo domains.Repository) *SongService {
 }
 
 func (s *SongService) DeleteSong(id int) error {
-	err := s.repo.Delete(id)
-
-	if err != nil {
+	if err := s.repo.Delete(id); err != nil {
 		return err
 	}
 

@@ -15,8 +15,7 @@ type DBConfig struct {
 }
 
 func GetConfig() DBConfig {
-	err := godotenv.Load()
-	if err != nil {
+	if err := godotenv.Load(); err != nil {
 		logger.Log.Fatal("Error loading env file | ", err)
 	}
 
