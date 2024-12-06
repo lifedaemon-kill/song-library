@@ -2,12 +2,14 @@ package services
 
 import (
 	"song-library/internal/domains"
+	"song-library/models"
 	"strings"
 )
 
 type Service interface {
 	DeleteSong(id int) error
 	GetLyrics(songId, pageOffset int) (string, error)
+	UpdateSong(id int, song models.Song) (int, error)
 }
 
 type SongService struct {
@@ -39,4 +41,11 @@ func (s *SongService) GetLyrics(songId, pageOffset int) (string, error) {
 	targetVerses := verses[pageOffset : pageOffset+sizeVerse]
 
 	return strings.Join(targetVerses, "\n\n"), nil
+}
+func (s *SongService) UpdateSong(id int, song models.Song) (int, error) {
+	updatedId, err := s.repo.Update(id, song)
+	if err != nil {
+		return -1, err
+	}
+	return updatedId, nil
 }

@@ -2,7 +2,6 @@ package domains
 
 import (
 	"fmt"
-	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
 	"song-library/models"
 )
@@ -12,8 +11,8 @@ const (
 )
 
 type Repository interface {
-	Create(song models.Song) (uuid.UUID, error)
-	Update(id int, song models.Song) (uuid.UUID, error)
+	Create(song models.Song) (int, error)
+	Update(id int, song models.Song) (int, error)
 	Delete(id int) error
 	GetSliceSongs(offset, limit int) ([]models.Song, error)
 	GetSongs() ([]models.Song, error)
@@ -29,22 +28,22 @@ func NewSongRepository(db *sqlx.DB) *SongRepository {
 	return &SongRepository{db: db}
 }
 
-func (r *SongRepository) Create(song models.Song) (uuid.UUID, error) {
+func (r *SongRepository) Create(song models.Song) (int, error) {
 	query := fmt.Sprintf("INSERT INTO %s (author, title, release_date, lyrics, link) VALUES ($1, $2, $3, $4, $5) RETURNING id", songTable)
 	row := r.db.QueryRow(query, song.Author, song.Title, song.ReleaseDate, song.Lyrics, song.Link)
 
-	var id uuid.UUID
+	var id int
 	if err := row.Scan(&id); err != nil {
-		return uuid.Nil, err
+		return -1, err
 	}
 	return id, nil
 }
-func (r *SongRepository) Update(id int, song models.Song) (uuid.UUID, error) {
+func (r *SongRepository) Update(id int, song models.Song) (int, error) {
 	query := fmt.Sprintf("UPDATE %s SET author = $1, title = $2, release_date = $3, lyrics = $4, link = $5 WHERE id = $6", songTable)
 
 	_, err := r.db.Exec(query, song.Author, song.Title, song.ReleaseDate, song.Lyrics, song.Link, id)
 	if err != nil {
-		return uuid.Nil, err
+		return -1, err
 	}
 	return song.Id, nil
 }
