@@ -1,11 +1,9 @@
 package models
 
-import "github.com/google/uuid"
-
 type Song struct {
-	Id     uuid.UUID `json:"id" db:"id"`
-	Author string    `json:"group" db:"author"`
-	Title  string    `json:"song" db:"title"`
+	Id     int    `json:"id" db:"id"`
+	Author string `json:"group" db:"author"`
+	Title  string `json:"song" db:"title"`
 	SongDetail
 }
 
