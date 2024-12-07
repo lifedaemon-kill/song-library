@@ -17,3 +17,12 @@ type InfoQueryParams struct {
 	Group string `json:"group"`
 	Song  string `json:"song"`
 }
+
+type FilterParams struct {
+	ID          *int    `form:"id"`
+	Author      *string `form:"group"`
+	Title       *string `form:"title"`
+	ReleaseDate *string `form:"release_date"`
+	Lyrics      *string `form:"lyrics"`
+	Link        *string `form:"link"`
+}
