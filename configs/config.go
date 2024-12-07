@@ -3,7 +3,7 @@ package configs
 import (
 	"github.com/joho/godotenv"
 	"os"
-	"song-library/logger"
+	"song-library/internal/pkg/logger"
 )
 
 type Config struct {

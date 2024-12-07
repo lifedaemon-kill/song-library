@@ -2,8 +2,8 @@ package services
 
 import (
 	"song-library/internal/domains"
-	"song-library/logger"
-	"song-library/models"
+	"song-library/internal/pkg/logger"
+	"song-library/internal/pkg/models"
 	"strings"
 )
 

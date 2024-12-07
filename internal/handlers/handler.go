@@ -3,9 +3,9 @@ package handlers
 import (
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"song-library/internal/pkg/logger"
+	"song-library/internal/pkg/models"
 	"song-library/internal/services"
-	"song-library/logger"
-	"song-library/models"
 	"strconv"
 )
 

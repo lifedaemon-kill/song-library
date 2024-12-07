@@ -3,7 +3,7 @@ package domains
 import (
 	"fmt"
 	"github.com/jmoiron/sqlx"
-	"song-library/models"
+	"song-library/internal/pkg/models"
 )
 
 const (

@@ -6,7 +6,7 @@ import (
 	"github.com/swaggo/gin-swagger"
 	"net/http"
 	"song-library/internal/handlers"
-	"song-library/logger"
+	"song-library/internal/pkg/logger"
 )
 
 func NewRouter(handler handlers.Handler) *gin.Engine {

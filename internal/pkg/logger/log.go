@@ -9,7 +9,7 @@ import (
 var Log *logrus.Logger
 
 func GetNewLogger() (*logrus.Logger, error) {
-	logFilePath := "logger/api.log"
+	logFilePath := "internal/pkg/logger/api.log"
 
 	logFile, err := os.OpenFile(logFilePath, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
 	if err != nil {

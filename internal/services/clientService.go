@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"song-library/logger"
-	"song-library/models"
+	"song-library/internal/pkg/logger"
+	"song-library/internal/pkg/models"
 )
 
 type ClientService interface {

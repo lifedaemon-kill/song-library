@@ -3,15 +3,15 @@ package main
 import (
 	"github.com/pressly/goose"
 	"song-library/configs"
-	"song-library/db"
 	"song-library/internal/domains"
 	"song-library/internal/handlers"
+	"song-library/internal/pkg/logger"
+	"song-library/internal/pkg/storage"
 	"song-library/internal/routers"
 	"song-library/internal/services"
-	"song-library/logger"
 )
 
-const migrationsPath = "migrations"
+const migrationsPath = "db/migrations"
 
 func main() {
 	var err error
@@ -25,7 +25,7 @@ func main() {
 	config := configs.GetConfig()
 
 	//Database
-	database, err := db.NewDB(config)
+	database, err := storage.NewDB(config)
 	if err != nil {
 		logger.Log.Fatal("Init database was failed | ", err)
 		panic(err)
