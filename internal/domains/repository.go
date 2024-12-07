@@ -57,7 +57,7 @@ func (r *SongRepository) Delete(id int) error {
 }
 
 func (r *SongRepository) GetLyrics(songId int) (string, error) {
-	query := "SELECT lyrics FROM " + songTable + " WHERE id=$1"
+	query := fmt.Sprintf("SELECT lyrics FROM %s WHERE id=$1", songTable)
 	var lyrics string
 	if err := r.db.Get(&lyrics, query, songId); err != nil {
 		return "", err
@@ -66,8 +66,8 @@ func (r *SongRepository) GetLyrics(songId int) (string, error) {
 }
 
 func (r *SongRepository) GetFilteredLib(params models.FilterParams) ([]models.Song, error) {
-	query := "SELECT id, author, title, release_date, lyrics, link FROM " + songTable + "WHERE 1=1"
-	args := []interface{}{}
+	query := fmt.Sprintf("SELECT id, author, title, release_date, lyrics, link FROM %s WHERE 1=1", songTable)
+	var args []interface{}
 
 	if params.ID != nil {
 		query += " AND id = ?"
@@ -104,6 +104,7 @@ func (r *SongRepository) GetFilteredLib(params models.FilterParams) ([]models.So
 }
 
 // For tests
+
 func (r *SongRepository) GetSongs() ([]models.Song, error) {
 	var songs []models.Song
 	query := fmt.Sprintf("SELECT * FROM %s", songTable)
