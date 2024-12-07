@@ -8,16 +8,17 @@ import (
 	"song-library/configs"
 )
 
-func NewDB(cfg configs.DBConfig) (*sqlx.DB, error) {
-	if cfg.Username == "" || cfg.Password == "" || cfg.DBName == "" || cfg.Host == "" || cfg.SSLMode == "" {
+func NewDB(cfg configs.Config) (*sqlx.DB, error) {
+	if cfg.Username == "" || cfg.Password == "" || cfg.DBName == "" || cfg.Host == "" || cfg.SSLMode == "" || cfg.Port == "" {
 		return nil, errors.New("env config is empty")
 	}
-	psqlInfo := fmt.Sprintf("user=%s dbname=%s password=%s sslmode=%s host=%s",
+	psqlInfo := fmt.Sprintf("user=%s dbname=%s password=%s sslmode=%s host=%s port=%s",
 		cfg.Username,
 		cfg.DBName,
 		cfg.Password,
 		cfg.SSLMode,
-		cfg.Host)
+		cfg.Host,
+		cfg.Port)
 
 	db, err := sqlx.Open("postgres", psqlInfo)
 	if err != nil {

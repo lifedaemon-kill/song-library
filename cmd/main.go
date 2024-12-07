@@ -22,8 +22,10 @@ func main() {
 	}
 	logger.Log.Info("Trying start server...")
 
+	config := configs.GetConfig()
+
 	//Database
-	database, err := db.NewDB(configs.GetConfig())
+	database, err := db.NewDB(config)
 	if err != nil {
 		logger.Log.Fatal("Init database was failed | ", err)
 		panic(err)
@@ -40,7 +42,7 @@ func main() {
 	//Internal layer
 	repository := domains.NewSongRepository(database)
 	service := services.NewSongService(repository)
-	clientService := services.NewClientService("localhost:3000")
+	clientService := services.NewClientService(config.ExternalApi)
 	handler := handlers.NewHandler(service, clientService)
 
 	logger.Log.Info("Init internal layer successful")
