@@ -27,7 +27,15 @@ func NewHandler(songService services.Service, clientService services.ClientServi
 
 // GetLibrary Получение данных библиотеки с фильтрацией по всем полям и пагинацией
 func (h *SongHandler) GetLibrary(c *gin.Context) {
-
+	var params models.FilterParams
+	if err := c.ShouldBindQuery(&params); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	}
+	lib, err := h.songService.GetFilteredLib(params)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err})
+	}
+	c.JSON(http.StatusOK, lib)
 }
 
 // GetLyrics Получение текста песни с пагинацией по куплетам

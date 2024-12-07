@@ -11,6 +11,7 @@ type Service interface {
 	GetLyrics(songId, pageOffset int) (string, error)
 	UpdateSong(id int, song models.Song) (int, error)
 	AddSong(song models.Song) (int, error)
+	GetFilteredLib(params models.FilterParams) ([]models.Song, error)
 }
 
 type SongService struct {
@@ -55,4 +56,11 @@ func (s *SongService) AddSong(song models.Song) (int, error) {
 		return 0, err
 	}
 	return id, nil
+}
+func (s *SongService) GetFilteredLib(params models.FilterParams) ([]models.Song, error) {
+	lib, err := s.repo.GetFilteredLib(params)
+	if err != nil {
+		return nil, err
+	}
+	return lib, nil
 }

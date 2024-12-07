@@ -17,6 +17,7 @@ type Repository interface {
 	GetSliceSongs(offset, limit int) ([]models.Song, error)
 	GetSongs() ([]models.Song, error)
 	GetLyrics(songId int) (string, error)
+	GetFilteredLib(params models.FilterParams) ([]models.Song, error)
 }
 
 type SongRepository struct {
@@ -55,6 +56,54 @@ func (r *SongRepository) Delete(id int) error {
 	return nil
 }
 
+func (r *SongRepository) GetLyrics(songId int) (string, error) {
+	query := "SELECT lyrics FROM " + songTable + " WHERE id=$1"
+	var lyrics string
+	if err := r.db.Get(&lyrics, query, songId); err != nil {
+		return "", err
+	}
+	return lyrics, nil
+}
+
+func (r *SongRepository) GetFilteredLib(params models.FilterParams) ([]models.Song, error) {
+	query := "SELECT id, author, title, release_date, lyrics, link FROM " + songTable + "WHERE 1=1"
+	args := []interface{}{}
+
+	if params.ID != nil {
+		query += " AND id = ?"
+		args = append(args, *params.ID)
+	}
+
+	if params.Author != nil {
+		query += " AND author = ?"
+		args = append(args, "%"+*params.Author+"%")
+	}
+
+	if params.Title != nil {
+		query += " AND title LIKE ?"
+		args = append(args, "%"+*params.Title+"%")
+	}
+	if params.ReleaseDate != nil {
+		query += " AND release_date = ?"
+		args = append(args, *params.ReleaseDate)
+	}
+	if params.Lyrics != nil {
+		query += " AND lyrics LIKE ?"
+		args = append(args, "%"+*params.Lyrics+"%")
+	}
+	if params.Link != nil {
+		query += " AND link LIKE ?"
+		args = append(args, *params.Link)
+	}
+
+	var songs []models.Song
+	if err := r.db.Select(&songs, query, args...); err != nil {
+		return nil, err
+	}
+	return songs, nil
+}
+
+// For tests
 func (r *SongRepository) GetSongs() ([]models.Song, error) {
 	var songs []models.Song
 	query := fmt.Sprintf("SELECT * FROM %s", songTable)
@@ -71,13 +120,4 @@ func (r *SongRepository) GetSliceSongs(offset, limit int) ([]models.Song, error)
 		return nil, err
 	}
 	return songs, nil
-}
-
-func (r *SongRepository) GetLyrics(songId int) (string, error) {
-	query := fmt.Sprintf("SELECT lyrics FROM %s WHERE id=$1", songTable)
-	var lyrics string
-	if err := r.db.Get(&lyrics, query, songId); err != nil {
-		return "", err
-	}
-	return lyrics, nil
 }
