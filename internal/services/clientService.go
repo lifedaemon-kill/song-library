@@ -2,8 +2,10 @@ package services
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
+	"song-library/logger"
 	"song-library/models"
 )
 
@@ -20,7 +22,9 @@ func NewClientService(host string) ClientService {
 }
 
 func (c *clientService) GetDetailData(params models.InfoQueryParams) (models.SongDetail, error) {
-	response, err := http.Get(c.apiHost + "/info")
+	requestURL := fmt.Sprintf("http://%s/info?group=%s&song=", c.apiHost, params.Group, params.Song)
+	response, err := http.Get(requestURL)
+
 	if err != nil {
 		return models.SongDetail{}, err
 	}
@@ -36,5 +40,6 @@ func (c *clientService) GetDetailData(params models.InfoQueryParams) (models.Son
 		return models.SongDetail{}, err
 	}
 
+	logger.Log.Debug("info about ", params, " received")
 	return details, nil
 }
