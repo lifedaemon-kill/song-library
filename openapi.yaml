@@ -1,0 +1,209 @@
+openapi: 3.0.0
+info:
+  title: Song library
+  description: Song library is a test task project for storage and processing songs
+  version: 1.0.0
+servers:
+  - url: 'http://localhost:8080'
+
+
+paths:
+  /ping:
+    get:
+      summary: Проверка доступности сервера
+      responses:
+        '200':
+          description: Сервер отвечает на запрос
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "pong!"
+
+  /songs:
+    get:
+      summary: Получение данных библиотеки песен
+      parameters:
+        - name: song
+          in: query
+          description: Название песни для фильтрации
+          required: false
+          schema:
+            type: string
+        - name: group
+          in: query
+          description: Автор песни для фильтрации
+          required: false
+          schema:
+            type: string
+        - name: releaseDate
+          in: query
+          description: Дата выпуска песни для фильтрации
+          required: false
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: Номер страницы для пагинации
+          required: false
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          description: Лимит песен на страницу
+          required: false
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Список песен
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Song'
+    post:
+      summary: Добавление новой песни
+      parameters:
+        - name: song
+          in: query
+          description: Название песни
+          required: false
+          schema:
+            type: string
+        - name: group
+          in: query
+          description: Автор песни
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Песня добавлена
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Песня успешно добавлена
+
+  /songs/{id}:
+    get:
+      summary: Получение текста песни с пагинацией по куплетам (Выводятся 3 куплета)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID песни
+          schema:
+            type: integer
+        - name: offset
+          in: query
+          description: Смещение для пагинации по куплетам
+          required: false
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Текст песни
+          content:
+            application/json:
+              schema:
+                type: string
+    delete:
+      summary: Удаление песни
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID песни для удаления
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Песня удалена
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: ok
+    put:
+      summary: Обновление данных песни
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID песни для обновления
+          schema:
+            type: integer
+      requestBody:
+        description: Обновленные данные песни
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Song'
+      responses:
+        '200':
+          description: Песня обновлена
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Песня обновлена
+
+components:
+  schemas:
+    Song:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Уникальный идентификатор песни
+        group:
+          type: string
+          description: Автор песни
+        song:
+          type: string
+          description: Название песни
+        releaseDate:
+          type: string
+          format: date
+          description: Дата выхода песни
+        text:
+          type: string
+          description: Текст песни
+        link:
+          type: string
+          description: Ссылка на песню
+    SongDetail:
+      type: object
+      properties:
+        group:
+          type: string
+          description: Автор песни
+        song:
+          type: string
+          description: Название песни
+        releaseDate:
+          type: string
+          format: date
+          description: Дата выхода песни
+        text:
+          type: string
+          description: Текст песни
+        link:
+          type: string
+          description: Ссылка на песню
