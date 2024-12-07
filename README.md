@@ -2,18 +2,13 @@
 
 Стэк технологий:
 
-* go
-* gin
-* sqlx
-* logrus
-* goose
-* postgres
+#### go, gin, sqlx, logrus, goose, postgres
 
 Присутствует документация swagger
 
 ```http://localhost/swaqger/index.html```
 
-Для подключения к базе данных требуется .env файл в корне проекта
+Для подключения к базе данных и внешнего сервиса требуется .env файл в корне проекта
 
 ### .env
 
