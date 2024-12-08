@@ -1,7 +1,12 @@
 package main
 
 import (
+	"context"
+	"errors"
 	"github.com/pressly/goose"
+	"net/http"
+	"os"
+	"os/signal"
 	"song-library/configs"
 	"song-library/internal/domains"
 	"song-library/internal/handlers"
@@ -9,6 +14,9 @@ import (
 	"song-library/internal/pkg/storage"
 	"song-library/internal/routers"
 	"song-library/internal/services"
+	"sync"
+	"syscall"
+	"time"
 )
 
 const migrationsPath = "db/migrations"
@@ -50,9 +58,43 @@ func main() {
 	//Router
 	router := routers.NewRouter(handler)
 
-	if err := router.Run("localhost:8080"); err != nil {
-		logger.Log.Fatal("router run failed")
-		return
+	server := &http.Server{
+		Addr:    "localhost:8080",
+		Handler: router,
 	}
+	//Start server
+	go func() {
+		logger.Log.Info("Starting Gin server at localhost:8080")
+		if err := server.ListenAndServe(); err != nil && !errors.Is(http.ErrServerClosed, err) {
+			logger.Log.Fatalf("Failed to listen and serve: %v", err)
+		}
+	}()
 	logger.Log.Info("Server start completed")
+
+	//Graceful shutdown
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
+	wg := &sync.WaitGroup{}
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+
+		<-quit
+
+		ctx, shutdown := context.WithTimeout(context.Background(), 5*time.Second)
+		defer shutdown()
+
+		if err := server.Shutdown(ctx); err != nil {
+			logger.Log.Error("failed to stop server: %v", err)
+		}
+
+		if err := database.Close(); err != nil {
+			logger.Log.Error("failed to close database: %v", err)
+		}
+
+		logger.Log.Info("Graceful shutdown complete")
+	}()
+
+	wg.Wait()
+
 }
