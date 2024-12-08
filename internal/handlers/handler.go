@@ -29,8 +29,11 @@ func NewHandler(songService services.Service, clientService services.ClientServi
 func (h *SongHandler) GetLibrary(c *gin.Context) {
 	var params models.FilterParams
 	if err := c.ShouldBindQuery(&params); err != nil {
+		logger.Log.Error("GET LIB H CANT PARS PARAMS ", c)
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 	}
+	logger.Log.Debug("GET LIB H ", params)
+
 	lib, err := h.songService.GetFilteredLib(params)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err})
@@ -40,7 +43,7 @@ func (h *SongHandler) GetLibrary(c *gin.Context) {
 
 // GetLyrics Получение текста песни с пагинацией по куплетам
 func (h *SongHandler) GetLyrics(c *gin.Context) {
-	id, err := strconv.Atoi(c.Query("id"))
+	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		logger.Log.Error(err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})

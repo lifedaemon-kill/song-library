@@ -1,6 +1,7 @@
 package services
 
 import (
+	"errors"
 	"song-library/internal/domains"
 	"song-library/internal/pkg/logger"
 	"song-library/internal/pkg/models"
@@ -31,7 +32,7 @@ func (s *SongService) DeleteSong(id int) error {
 	return nil
 }
 
-func (s *SongService) GetLyrics(songId, pageOffset int) (string, error) {
+func (s *SongService) GetLyrics(songId, from int) (string, error) {
 	const verseCount = 3 //Сколько куплетов выводить
 	lyrics, err := s.repo.GetLyrics(songId)
 	if err != nil {
@@ -39,9 +40,23 @@ func (s *SongService) GetLyrics(songId, pageOffset int) (string, error) {
 	}
 
 	verses := strings.Split(lyrics, "\n\n")
-	targetVerses := verses[pageOffset : pageOffset+verseCount]
+	if len(verses) < from {
+		return "", errors.New("invalid offset")
+	}
+	var to int
+	if len(verses) == 0 {
 
-	logger.Log.Debug("lyrics for song ", songId, " received")
+	}
+	if from+verseCount > len(verses) {
+		to = len(verses)
+	} else {
+		to = from + verseCount
+	}
+
+	targetVerses := verses[from:to]
+	logger.Log.Debug("get lyr=", from, to, targetVerses, lyrics)
+
+	logger.Log.Debug("lyrics for song ", songId, " recieved")
 	return strings.Join(targetVerses, "\n\n"), nil
 }
 

@@ -18,7 +18,7 @@ func GetNewLogger() (*logrus.Logger, error) {
 
 	log := logrus.New()
 	log.SetOutput(io.MultiWriter(os.Stdout, logFile))
-	log.SetLevel(logrus.InfoLevel)
+	log.SetLevel(logrus.TraceLevel)
 	log.SetFormatter(&logrus.TextFormatter{
 		FullTimestamp: true,
 	})
