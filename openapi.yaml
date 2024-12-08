@@ -45,15 +45,15 @@ paths:
           required: false
           schema:
             type: string
-        - name: page
+        - name: limit
           in: query
-          description: Номер страницы для пагинации
+          description: Количество песен
           required: false
           schema:
             type: integer
-        - name: limit
+        - name: offset
           in: query
-          description: Лимит песен на страницу
+          description: Сдвиг начиная с какой песни выводить
           required: false
           schema:
             type: integer

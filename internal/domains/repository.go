@@ -96,6 +96,21 @@ func (r *SongRepository) GetFilteredLib(params models.FilterParams) ([]models.So
 		args = append(args, *params.Link)
 	}
 
+	query += " LIMIT ?"
+	if params.Limit != nil {
+		args = append(args, *params.Limit)
+	} else {
+		args = append(args, 10)
+	}
+
+	query += " OFFSET ?"
+
+	if params.Offset != nil {
+		args = append(args, *params.Offset)
+	} else {
+		args = append(args, 0)
+	}
+
 	var songs []models.Song
 	if err := r.db.Select(&songs, query, args...); err != nil {
 		return nil, err

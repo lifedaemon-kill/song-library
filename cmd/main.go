@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"errors"
+	"fmt"
 	"github.com/pressly/goose"
 	"net/http"
 	"os"
@@ -26,7 +27,8 @@ func main() {
 	//Logger
 	logger.Log, err = logger.GetNewLogger()
 	if err != nil {
-		panic(err)
+		fmt.Println(err)
+		return
 	}
 	logger.Log.Info("Trying start server...")
 

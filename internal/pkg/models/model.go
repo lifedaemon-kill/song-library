@@ -21,8 +21,10 @@ type InfoQueryParams struct {
 type FilterParams struct {
 	ID          *int    `form:"id"`
 	Author      *string `form:"group"`
-	Title       *string `form:"title"`
-	ReleaseDate *string `form:"release_date"`
-	Lyrics      *string `form:"lyrics"`
+	Title       *string `form:"song"`
+	ReleaseDate *string `form:"releaseDate"`
+	Lyrics      *string `form:"text"`
 	Link        *string `form:"link"`
+	Offset      *int    `form:"offset"`
+	Limit       *int    `form:"limit"`
 }
