@@ -52,7 +52,7 @@ func main() {
 	//Internal layer
 	repository := domains.NewSongRepository(database)
 	service := services.NewSongService(repository)
-	clientService := services.NewClientService(config.ExternalApi)
+	clientService := services.NewClientService(config.Server.ExternalApiAddr)
 	handler := handlers.NewHandler(service, clientService)
 
 	logger.Log.Info("Init internal layer successful")
@@ -61,7 +61,7 @@ func main() {
 	router := routers.NewRouter(handler)
 
 	server := &http.Server{
-		Addr:    "localhost:8080",
+		Addr:    config.Server.Host + ":" + config.Server.Port,
 		Handler: router,
 	}
 	//Start server

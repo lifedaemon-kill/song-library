@@ -7,14 +7,21 @@ import (
 )
 
 type Config struct {
+	DB     DBConfig
+	Server ServerConfig
+}
+type DBConfig struct {
 	Username string
 	DBName   string
 	Host     string
 	Password string
 	SSLMode  string
 	Port     string
-
-	ExternalApi string
+}
+type ServerConfig struct {
+	ExternalApiAddr string
+	Host            string
+	Port            string
 }
 
 func GetConfig() Config {
@@ -24,14 +31,16 @@ func GetConfig() Config {
 
 	cfg := Config{}
 
-	cfg.Username = os.Getenv("USER")
-	cfg.DBName = os.Getenv("DBNAME")
-	cfg.Host = os.Getenv("HOST")
-	cfg.Password = os.Getenv("PASSWORD")
-	cfg.SSLMode = os.Getenv("SSLMODE")
-	cfg.Port = os.Getenv("PORT")
+	cfg.DB.Username = os.Getenv("DB.USER")
+	cfg.DB.DBName = os.Getenv("DB.DBNAME")
+	cfg.DB.Host = os.Getenv("DB.HOST")
+	cfg.DB.Password = os.Getenv("DB.PASSWORD")
+	cfg.DB.SSLMode = os.Getenv("DB.SSLMODE")
+	cfg.DB.Port = os.Getenv("DB.PORT")
 
-	cfg.ExternalApi = os.Getenv("EXTERNAL_API")
+	cfg.Server.ExternalApiAddr = os.Getenv("SERVER.EXTERNAL_API")
+	cfg.Server.Host = os.Getenv("SERVER.HOST")
+	cfg.Server.Port = os.Getenv("SERVER.PORT")
 
 	return cfg
 }

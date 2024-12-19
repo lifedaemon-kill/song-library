@@ -16,15 +16,19 @@
 
 ``` yaml
 #Database parameters 
-USER=           #postgres
-DBNAME=         #song_lib_db
-PASSWORD=       #not 123456
-SSLMODE=        #enable / disable
-HOST=           #127.0.0.1
-PORT=           #5432
+DB.USER=            #postgres
+DB.DBNAME=          #song_lib_db
+DB.PASSWORD=        #not 123456
+DB.SSLMODE=         #enable / disable
+DB.HOST=            #localhost
+DB.PORT=            #5432
 
-#For /info requests. used in clientService
-EXTERNAL_API=   #host:port 
+#Server parameters 
+SERVER.HOST=        #localhost
+SERVER.PORT=        #8080
+
+#For /info requests. Used in clientService
+SERVER.EXTERNAL_API=  #localhost:3000 
 ```
 
 ## Маршруты сервиса
@@ -55,7 +59,6 @@ EXTERNAL_API=   #host:port
 
 Каждый параметр является необязательным.
 
-
 ```json
 {
   "id": int
@@ -68,6 +71,7 @@ EXTERNAL_API=   #host:port
   "limit": int
 }
 ```
+
 Если сделать запрос без параметров то
 
 в таком случае выведутся первые 10 песен
@@ -111,7 +115,7 @@ GET ```/songs/3?offset=3```
 ```yaml
 {
   song: string
-  group: string
+    group: string
 }
 ```
 
